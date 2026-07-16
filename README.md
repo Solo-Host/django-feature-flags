@@ -140,6 +140,7 @@ python manage.py feature_flags set new-pricing-model --enabled --private
 - [`docs/api.md`](docs/api.md)
 - [`docs/rest-api.md`](docs/rest-api.md)
 - [`docs/examples.md`](docs/examples.md)
+- [`docs/frontend-typescript.md`](docs/frontend-typescript.md)
 - [`docs/frontend-vue.md`](docs/frontend-vue.md)
 
 ## Development
