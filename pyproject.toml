@@ -1,0 +1,99 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "django-feature-flags"
+version = "0.1.0"
+description = "Reusable Django feature flags with admin controls, REST API endpoints, and generic scoping."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+keywords = ["django", "feature flags", "feature toggles", "djangorestframework"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Framework :: Django",
+  "Framework :: Django :: 5.0",
+  "Framework :: Django :: 5.1",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "Django>=5.0,<6.0",
+  "djangorestframework>=3.15,<4.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "build>=1.2.2",
+  "coverage[toml]>=7.6.0",
+  "django-stubs>=5.1.0",
+  "djangorestframework-stubs>=3.15.0",
+  "mypy>=1.11.1",
+  "pytest>=8.3.2",
+  "pytest-cov>=5.0.0",
+  "pytest-django>=4.9.0",
+  "ruff>=0.6.2",
+  "tox>=4.18.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["feature_flags"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/.github",
+  "/docs",
+  "/feature_flags",
+  "/tests",
+  "/.pre-commit-config.yaml",
+  "/CODE_OF_CONDUCT.md",
+  "/CONTRIBUTING.md",
+  "/LICENSE",
+  "/README.md",
+  "/tox.ini",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["feature_flags"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "tests.settings"
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "--strict-config --strict-markers --cov=feature_flags --cov-report=term-missing --cov-fail-under=90"
+
+[tool.ruff]
+line-length = 100
+src = ["feature_flags", "tests"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["B", "DJ", "E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.11"
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+check_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
+[tool.django-stubs]
+django_settings_module = "tests.settings"
