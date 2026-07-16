@@ -5,6 +5,10 @@ This example follows the mixed-auth API design from the planning notes:
 - public pages fetch `/public/`
 - authenticated pages fetch `/all-enabled/`
 
+If your frontend is written in TypeScript and you want a reusable helper/store
+pattern instead of inline component code, see
+[`frontend-typescript.md`](frontend-typescript.md).
+
 ## Public page example
 
 ```vue
