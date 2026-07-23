@@ -190,7 +190,9 @@ python manage.py feature_flags set <name> [--enabled|--disabled] [--public|--pri
 - Normal feature work should not bump the version manually
 - Releases go through `.github/workflows/release.yml`, which creates a
   `release-bump/vX.Y.Z` branch and PR, updates `pyproject.toml`,
-  `feature_flags/__init__.py`, and `uv.lock`, and creates the tag and GitHub
+  `feature_flags/__init__.py`, and `uv.lock`; it attempts to enable PR
+  auto-merge when the repository supports it and otherwise leaves the release
+  PR open for manual merge after checks pass before creating the tag and GitHub
   Release after merge
 - The release PR creation path uses `actions/create-github-app-token@v3`; if
   manual releases fail with PR creation permission errors, check

@@ -219,7 +219,7 @@ jobs:
 
           echo "number=${PR_URL##*/}" >> "$GITHUB_OUTPUT"
 
-      - name: Enable auto-merge for release PR
+      - name: Enable auto-merge for release PR when supported
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ steps.state.outputs.existing_pr_number || steps.pr.outputs.number }}
@@ -228,6 +228,7 @@ jobs:
 
           ATTEMPTS=4
           SLEEP_SECONDS=10
+          AUTO_MERGE_UNSUPPORTED_PATTERN='Auto merge is not allowed for this repository|enablePullRequestAutoMerge'
 
           for attempt in $(seq 1 "${ATTEMPTS}"); do
             set +e
@@ -240,6 +241,11 @@ jobs:
 
             if [ "${STATUS}" -eq 0 ]; then
               echo "::notice::Enabled auto-merge for release PR #${PR_NUMBER}"
+              exit 0
+            fi
+
+            if printf '%s' "${OUTPUT}" | grep -Eq "${AUTO_MERGE_UNSUPPORTED_PATTERN}"; then
+              echo "::warning::Repository auto-merge is disabled; leaving release PR #${PR_NUMBER} open for manual merge after required checks pass"
               exit 0
             fi
 
