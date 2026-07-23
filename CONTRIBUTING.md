@@ -35,4 +35,6 @@ uv run tox -e security
 
 1. Do not bump the version during normal feature work.
 2. Use `.github/workflows/release.yml` to create the release bump PR from `main`.
+   The workflow updates `pyproject.toml`, `feature_flags/__init__.py`, and
+   `uv.lock` together.
 3. Let the workflow create the tag and GitHub Release after the release PR merges.

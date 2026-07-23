@@ -184,11 +184,14 @@ python manage.py feature_flags set <name> [--enabled|--disabled] [--public|--pri
 
 ### Versioning and Release Flow
 
-- `pyproject.toml` is the single source of truth for the package version
+- `pyproject.toml` drives release version selection, and
+  `feature_flags/__init__.py` and `uv.lock` must stay aligned with that package
+  version
 - Normal feature work should not bump the version manually
 - Releases go through `.github/workflows/release.yml`, which creates a
-  `release-bump/vX.Y.Z` branch and PR, bumps only `pyproject.toml`, and creates
-  the tag and GitHub Release after merge
+  `release-bump/vX.Y.Z` branch and PR, updates `pyproject.toml`,
+  `feature_flags/__init__.py`, and `uv.lock`, and creates the tag and GitHub
+  Release after merge
 - The release PR creation path uses `actions/create-github-app-token@v3`; if
   manual releases fail with PR creation permission errors, check
   `RELEASE_APP_ID` and `RELEASE_APP_PRIVATE_KEY` first
