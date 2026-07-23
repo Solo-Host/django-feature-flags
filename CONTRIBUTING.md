@@ -5,9 +5,7 @@ Thanks for contributing to `django-feature-flags`.
 ## Development setup
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
-pip install -e .[dev]
+uv sync --extra dev
 ```
 
 ## Local checks
@@ -15,16 +13,16 @@ pip install -e .[dev]
 Run the same checks used in CI:
 
 ```bash
-pytest
-ruff check .
-ruff format --check feature_flags tests
-mypy feature_flags
+uv run tox
 ```
 
 You can also run the default tox environments:
 
 ```bash
-tox -e py311,lint,mypy
+uv run tox -e py313
+uv run tox -e lint
+uv run tox -e mypy
+uv run tox -e security
 ```
 
 ## Pull requests
@@ -35,6 +33,6 @@ tox -e py311,lint,mypy
 
 ## Release process
 
-1. Update the version in `pyproject.toml` and `feature_flags/__init__.py`.
-2. Create a tagged release.
-3. Publish through the GitHub Actions workflow configured for PyPI trusted publishing.
+1. Do not bump the version during normal feature work.
+2. Use `.github/workflows/release.yml` to create the release bump PR from `main`.
+3. Let the workflow create the tag and GitHub Release after the release PR merges.

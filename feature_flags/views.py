@@ -46,9 +46,10 @@ class FeatureFlagViewSet(viewsets.ReadOnlyModelViewSet):
                 "context_app_label, context_model, and context_id must be supplied together."
             )
 
-        assert app_label is not None
-        assert model_name is not None
-        assert object_id is not None
+        if app_label is None or model_name is None or object_id is None:
+            raise ValidationError(
+                "context_app_label, context_model, and context_id must be supplied together."
+            )
 
         try:
             model_class = cast(type[models.Model], apps.get_model(app_label, model_name))

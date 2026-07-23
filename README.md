@@ -1,7 +1,5 @@
 # django-feature-flags
 
-[![PyPI version](https://img.shields.io/pypi/v/django-feature-flags.svg)](https://pypi.org/project/django-feature-flags/)
-[![Python versions](https://img.shields.io/pypi/pyversions/django-feature-flags.svg)](https://pypi.org/project/django-feature-flags/)
 [![Django 5.0+](https://img.shields.io/badge/Django-5.0%2B-0C4B33.svg)](https://www.djangoproject.com/)
 
 Reusable Django feature flags with:
@@ -146,13 +144,12 @@ python manage.py feature_flags set new-pricing-model --enabled --private
 ## Development
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
-pip install -e .[dev]
-pytest
-ruff check .
-ruff format --check feature_flags tests
-mypy feature_flags
+uv sync --extra dev
+uv run tox
+uv run tox -e py313 -- tests/test_models.py
+uv run tox -e lint
+uv run tox -e mypy
+uv run tox -e security
 ```
 
 ## License
