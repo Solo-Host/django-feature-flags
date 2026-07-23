@@ -219,7 +219,7 @@ jobs:
 
           echo "number=${PR_URL##*/}" >> "$GITHUB_OUTPUT"
 
-      - name: Enable auto-merge for release PR when supported
+      - name: Enable auto-merge and branch cleanup for release PR
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ steps.state.outputs.existing_pr_number || steps.pr.outputs.number }}
@@ -228,24 +228,19 @@ jobs:
 
           ATTEMPTS=4
           SLEEP_SECONDS=10
-          AUTO_MERGE_UNSUPPORTED_PATTERN='Auto merge is not allowed for this repository|enablePullRequestAutoMerge'
 
           for attempt in $(seq 1 "${ATTEMPTS}"); do
             set +e
             OUTPUT="$(gh pr merge "${PR_NUMBER}" \
               --repo "${{ github.repository }}" \
               --squash \
-              --auto 2>&1)"
+              --auto \
+              --delete-branch 2>&1)"
             STATUS=$?
             set -e
 
             if [ "${STATUS}" -eq 0 ]; then
-              echo "::notice::Enabled auto-merge for release PR #${PR_NUMBER}"
-              exit 0
-            fi
-
-            if printf '%s' "${OUTPUT}" | grep -Eq "${AUTO_MERGE_UNSUPPORTED_PATTERN}"; then
-              echo "::warning::Repository auto-merge is disabled; leaving release PR #${PR_NUMBER} open for manual merge after required checks pass"
+              echo "::notice::Enabled auto-merge with branch deletion for release PR #${PR_NUMBER}"
               exit 0
             fi
 
@@ -273,7 +268,6 @@ jobs:
     outputs:
       version: ${{ steps.version.outputs.version }}
       tag: ${{ steps.version.outputs.tag }}
-      branch: ${{ steps.version.outputs.branch }}
     steps:
       - name: Extract version from branch name
         id: version
@@ -287,11 +281,9 @@ jobs:
             echo "::error::Could not extract valid version from branch '${BRANCH}'"
             exit 1
           fi
-
           {
             echo "version=${VERSION}"
             echo "tag=v${VERSION}"
-            echo "branch=${BRANCH}"
           } >> "$GITHUB_OUTPUT"
 
   publish-release:
@@ -401,32 +393,4 @@ jobs:
               --repo "${{ github.repository }}" \
               --title "${TAG}" \
               --generate-notes
-          fi
-
-  cleanup-release-branch:
-    needs:
-      - release-metadata
-      - publish-release
-    runs-on: ubuntu-latest
-    if: >
-      always() &&
-      github.event_name == 'pull_request' &&
-      github.event.pull_request.merged == true &&
-      startsWith(github.event.pull_request.head.ref, 'release-bump/v') &&
-      needs.release-metadata.result == 'success' &&
-      needs.publish-release.result == 'success'
-    steps:
-      - uses: actions/checkout@v7
-        with:
-          ref: main
-          fetch-depth: 0
-
-      - name: Clean up release bump branch
-        env:
-          BRANCH: ${{ needs.release-metadata.outputs.branch }}
-        run: |
-          set -euo pipefail
-
-          if git ls-remote --exit-code origin "refs/heads/${BRANCH}" >/dev/null 2>&1; then
-            git push origin --delete "${BRANCH}"
           fi
