@@ -202,9 +202,9 @@ python manage.py feature_flags set <name> [--enabled|--disabled] [--public|--pri
 
 ### Using Worktrees
 
-- **Create worktrees for new work**: create branch worktrees under the sibling
-  `../worktrees/` directory (full path:
-  `/home/bjorn/workspace/web_projects/pkgs/worktrees/`).
+- **Create worktrees for new work**: create branch worktrees under the shared
+  `../../worktrees/` directory (full path:
+  `/home/bjorn/workspace/web_projects/worktrees/`).
 - **Don't work directly on main**: always create a feature branch within the
   worktree; never commit directly to `main`.
 - **Commit and push from the worktree branch** as work progresses or when tasks
@@ -214,13 +214,13 @@ python manage.py feature_flags set <name> [--enabled|--disabled] [--public|--pri
   been published, remove the worktree and then delete the local branch.
 - **Example workflow**:
   ```bash
-  git worktree add ../worktrees/django-feature-flags-add-caching-improvements -b add-caching-improvements main
-  cd ../worktrees/django-feature-flags-add-caching-improvements
+  git worktree add ../../worktrees/django-feature-flags-add-caching-improvements -b add-caching-improvements main
+  cd ../../worktrees/django-feature-flags-add-caching-improvements
   git add .
   git commit -m "Improve caching invalidation logic"
   git push -u origin add-caching-improvements
   cd /home/bjorn/workspace/web_projects/pkgs/django-feature-flags
-  git worktree remove ../worktrees/django-feature-flags-add-caching-improvements
+  git worktree remove ../../worktrees/django-feature-flags-add-caching-improvements
   git branch -d add-caching-improvements
   ```
 - If the worktree has uncommitted local-only files, clean or intentionally
